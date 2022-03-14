@@ -11,6 +11,14 @@ function getStarted () {
       choices: ["View all departments", "View all roles", "View all employees", "Add a department", "Add a Role", "Add an Employee", "Update an Employee's Role"],
         }
     ])
+
+    .then ((answers) => {
+        if (answers.options === "View all departments") {
+            let dept = new Department (answers.id)
+        }
+    })
 }
 
 getStarted();
+
+// create classes 

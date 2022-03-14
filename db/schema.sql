@@ -23,9 +23,13 @@ CREATE TABLE Employee (
     id INT PRIMARY KEY,
     first_name VARCHAR (30),
     last_name VARCHAR (30),
-    role_id INT NOT NULL
+    role_id INT NOT NULL,
+    FOREIGN KEY (role_id)
     REFERENCES Role(id),
-    manager_id INT
+    manager_id INT,
+    FOREIGN KEY (manager_id)
     REFERENCES Employee(id) 
     
 );
+
+-- foreign key not workig

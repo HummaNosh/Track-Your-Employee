@@ -1,5 +1,8 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
+const Dept = require("../Library/department");
+const db = require("../middleware/db");
+
 
 
 function getStarted () {
@@ -14,11 +17,21 @@ function getStarted () {
 
     .then ((answers) => {
         if (answers.options === "View all departments") {
-            let dept = new Department (answers.id)
-        }
+            let dept = new Dept (answers.id, answers.department_name);
+            db.query(`SELECT * FROM Department`)
+        };
     })
 }
-
+// ignore above look at below..tbc
 getStarted();
 
 // create classes 
+
+
+const getDept = (req, res) => {
+    req.db.query('SELECT * FROM Department', (err, data) => {
+        return res.json ({succss: true, data});
+
+    });
+};
+

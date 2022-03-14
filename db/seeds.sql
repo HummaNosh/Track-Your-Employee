@@ -6,6 +6,8 @@ insert Department (id, department_name) values
 (30, "Finance"),
 (40, "HR");
 
+SELECT * FROM Department;
+
 insert Role (id, title, salary, department_id) values
 (111, "Sales Manager", 35000, 10),
 (112, "Sales Agent", 25000, 10),
@@ -18,6 +20,7 @@ insert Role (id, title, salary, department_id) values
 (119, "Recruitment Officer", 23000, 40),
 (120, "HR Manager", 30000, 40);
 
+SELECT * FROM Role;
 
 insert Employee (id, first_name, last_name, role_id, manager_id) values
 (001, "Miguel", "Diaz", 111, 003),
@@ -34,8 +37,9 @@ insert Employee (id, first_name, last_name, role_id, manager_id) values
 (012, "Anna", "Frank", 112, 001),
 (013, "Iyaana", "Jarrette", 114, 005),
 (014, "Marianne", "Haven", 114, 005),
-(015, "Mallory", "Beer", 114, 005),
+(015, "Mallory", "Beer", 114, 005);
 
+SELECT * FROM Employee;
 
 -- 4 software developers, 3 sales agents
 

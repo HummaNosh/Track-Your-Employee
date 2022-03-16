@@ -1,7 +1,9 @@
 const express = require('express');
 const inquirer = require("inquirer");
 const fs = require("fs");
-const Dept = require("./Library/dept");
+const DeptClass = require("./Library/dept");
+const RoleClass = require("./Library/role");
+const EmpClass = require("./Library/emp");
 const db = require("./middleware/db");
 const res = require('express/lib/response');
 const PORT = process.env.PORT || 3001;
@@ -14,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(db);
 
-
+let teamArray = [];
 
 function getStarted () {
     inquirer.prompt ([
@@ -32,24 +34,29 @@ function getStarted () {
             getStarted();
         }
     });
-    // if (answers.options === "View all Roles") {
-    //   let roles = new Role (answers.id, answers.title, answers.salary, answers.department_id);
-    //   db.query(`SELECT * FROM Role`)
-    // };
+    if (answers.options === "View all Roles") {
+      getRoles();
+      getStarted();
+    };
     // if (answers.options === "View all Employees") {
     //   let emps = new Emp (answers.id, answers.first_name, answers.last_name, answers.role_id, answers.manager_id);
     //   db.query(`SELECT * FROM Employee`)
     // };
+    if (answers.options === "Add an department") {
+        let addDep = new DeptClass (answers.id, answers.department_id);
+        teamArray.push(addDep);
+      };
+    if (answers.options === "Add an Role") {
+        let addRole = new RoleClass (answers.id, answers.department_id);
+        teamArray.push(addRole);
+      };
+      if (answers.options === "Add an Employee") {
+        let addEmp = new EmpClass (answers.id, answers.department_id);
+        teamArray.push(addEmp);
+      };
 }
+// change the above abit and doublt check the db query
 
-
-// function DeptStuff() {
-
-//   const getDept = (req, res) => {
-//     req.db.query("SELECT department.id, department.department_name FROM Department"), (err,data) => {
-//       return res.json ({success: true, data});
-//     }
-// }};
 
 const getDept = (req, res) => {
     req.db.query('SELECT * FROM Department', (err, data) => {
@@ -58,27 +65,27 @@ const getDept = (req, res) => {
     });
 };
 
-// const getRole = (req, res) => {
-//     req.db.query('SELECT * FROM Role', (err, data) => {
-//       if (err) {
-//         console.log(`[ERROR]: Failed to get role info | ${err.message}`);
-//         return res.status(500).json({ success: false });
-//       }
+const getRoles = (req, res) => {
+    req.db.query('SELECT * FROM Role', (err, data) => {
+      if (err) {
+        console.log(`[ERROR]: Failed to get role info | ${err.message}`);
+        return res.status(500).json({ success: false });
+      }
   
-//       return res.json({ success: true, data });
-//     });
-//   };
+      return res.json({ success: true, data });
+    });
+  };
 
-//   const getEmployee = (req, res) => {
-//     req.db.query('SELECT * FROM Employee ', (err, data) => {
-//       if (err) {
-//         console.log(`[ERROR]: Failed to get employee info | ${err.message}`);
-//         return res.status(500).json({ success: false });
-//       }
+  const getEmployee = (req, res) => {
+    req.db.query('SELECT * FROM Employee ', (err, data) => {
+      if (err) {
+        console.log(`[ERROR]: Failed to get employee info | ${err.message}`);
+        return res.status(500).json({ success: false });
+      }
   
-//       return res.json({ success: true, data });
-//     });
-//   };
+      return res.json({ success: true, data });
+    });
+  };
 //   const updateEmpbyID = (req, res) => {
 //     const { EmpName } = req.body;
 //     const { EmpID } = req.params;
@@ -109,7 +116,8 @@ app.listen(PORT, () =>
 module.exports = {
  
   getDept, 
-   
+   getRoles,
+   getEmployee,
 };
 
 getStarted()

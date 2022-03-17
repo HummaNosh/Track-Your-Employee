@@ -21,11 +21,11 @@ let teamArray = [];
 function getStarted () {
     inquirer.prompt ([
         {
-            type: "list",
+      type: "list",
       name: "options",
       message:"Hey There! Welcome.. What would you like to do? Select an option below..", 
       choices: ["View all Departments", "View all Roles", "View all Employees", "Add a department", "Add a Role", "Add an Employee", "Update an Employee's Role"],
-        }
+        },
     ])
 
     .then ((answers) => {
@@ -33,11 +33,11 @@ function getStarted () {
             getDept();
             getStarted();
         }
-    });
+    
     if (answers.options === "View all Roles") {
       getRoles();
       getStarted();
-    };
+    }
     // if (answers.options === "View all Employees") {
     //   let emps = new Emp (answers.id, answers.first_name, answers.last_name, answers.role_id, answers.manager_id);
     //   db.query(`SELECT * FROM Employee`)
@@ -45,16 +45,19 @@ function getStarted () {
     if (answers.options === "Add an department") {
         let addDep = new DeptClass (answers.id, answers.department_id);
         teamArray.push(addDep);
-      };
+      }
     if (answers.options === "Add an Role") {
         let addRole = new RoleClass (answers.id, answers.department_id);
         teamArray.push(addRole);
-      };
+      }
       if (answers.options === "Add an Employee") {
         let addEmp = new EmpClass (answers.id, answers.department_id);
         teamArray.push(addEmp);
-      };
+      }
+});
 }
+
+getStarted();
 // change the above abit and doublt check the db query
 
 
@@ -63,7 +66,7 @@ const getDept = (req, res) => {
         return res.json ({success: true, data});
 
     });
-};
+}
 
 const getRoles = (req, res) => {
     req.db.query('SELECT * FROM Role', (err, data) => {
@@ -74,7 +77,7 @@ const getRoles = (req, res) => {
   
       return res.json({ success: true, data });
     });
-  };
+  }
 
   const getEmployee = (req, res) => {
     req.db.query('SELECT * FROM Employee ', (err, data) => {
@@ -85,7 +88,7 @@ const getRoles = (req, res) => {
   
       return res.json({ success: true, data });
     });
-  };
+  }
 //   const updateEmpbyID = (req, res) => {
 //     const { EmpName } = req.body;
 //     const { EmpID } = req.params;
@@ -120,4 +123,3 @@ module.exports = {
    getEmployee,
 };
 
-getStarted()

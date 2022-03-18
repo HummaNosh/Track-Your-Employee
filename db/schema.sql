@@ -5,7 +5,7 @@ CREATE DATABASE track_people_db;
 USE track_people_db;
 
 CREATE TABLE Department (
-    id INT,
+    id INT PRIMARY KEY,
     department_name VARCHAR (100)
 );
 
@@ -13,7 +13,8 @@ CREATE TABLE Role (
     id INT PRIMARY KEY,
     title VARCHAR (30),
     salary DECIMAL,
-    department_id INT
+    department_id INT,
+    FOREIGN key (department_id)
     REFERENCES Department(id)
     
 );
@@ -33,4 +34,3 @@ CREATE TABLE Employee (
     
 );
 
--- foreign key not workig

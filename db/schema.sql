@@ -26,8 +26,8 @@ CREATE TABLE Employee (
     role_id INT NOT NULL,
     manager_id INT,
     FOREIGN KEY (role_id)
-    REFERENCES Role(id),
-    FOREIGN KEY (manager_id)
-    REFERENCES Employee(id)
+    REFERENCES Role(id)
+    -- FOREIGN KEY (manager_id)
+    -- REFERENCES Employee(id)
 );
 

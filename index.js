@@ -3,6 +3,7 @@ const mysql = require("mysql2");
 const Table = require('console.table');
 require("dotenv").config();
 
+// Bring in the database connection
 const db = mysql.createConnection({
   host: "localhost",
   user:"root",
@@ -11,6 +12,11 @@ const db = mysql.createConnection({
 
 });
 
+db.connect((err) => {
+  if (err) throw err;
+  console.log(`Connected to the company_db database.`);
+  getStarted();
+});
 let teamArray = [];
 
 
@@ -37,16 +43,14 @@ const getStarted = () => {
     .then ((answers) => {
         if (answers.options === "View all Departments") {
             getDept();
-            getStarted();
+           
         }
     
     if (answers.options === "View all Roles") {
-      getRoles(req, res);
-      getStarted();
+      getRoles();
     }
     if (answers.options === "View all Employees") {
-      let emps = new Emp (answers.id, answers.first_name, answers.last_name, answers.role_id, answers.manager_id);
-      db.query(`SELECT * FROM Employee`)
+      getEmployee();
     };
     if (answers.options === "Add an department") {
         let addDep = new DeptClass (answers.id, answers.department_id);
@@ -70,35 +74,41 @@ const getStarted = () => {
 // change the above abit and doublt check the db query
 
 function getDept() {
-    db.query('SELECT * FROM Department', (err, data) => {
+  console.log("its working");
+
+    db.query('SELECT * FROM Department', function (err, data) {
       if (err) {
         console.log(`[ERROR]: Failed to get departments`);
         return res.status(500).json({ success: false });
       }
-        return res.json ({success: true, data});
-
+console.table(data)
+getStarted();
     });
 };
 
-const getRoles = (req, res) => {
-    req.db.query('SELECT * FROM Role', (err, data) => {
+function getRoles() {
+
+    db.query('SELECT * FROM Role LEFT JOIN Department ON Role.department_id = Department.id', function (err, data){
       if (err) {
         console.log(`[ERROR]: Failed to get role info | ${err.message}`);
         return res.status(500).json({ success: false });
       }
   
-      return res.json({ success: true, data });
+     console.table(data)
+     getStarted();
     });
   };
 
-  const getEmployee = (req, res) => {
-    req.db.query('SELECT * FROM Employee ', (err, data) => {
+function getEmployee() {
+
+    db.query('SELECT * FROM Employee LEFT JOIN Role ON Employee.role_id = Role.id', function (err, data) {
       if (err) {
         console.log(`[ERROR]: Failed to get employee info | ${err.message}`);
         return res.status(500).json({ success: false });
       }
   
-      return res.json({ success: true, data });
+     console.table(data)
+     getStarted();
     });
   }
 
@@ -145,4 +155,3 @@ const getRoles = (req, res) => {
     );
   };
   
-  getStarted()

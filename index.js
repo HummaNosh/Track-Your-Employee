@@ -1,15 +1,19 @@
 const inquirer = require("inquirer");
-const fs = require("fs");
-const DeptClass = require("./Library/dept");
-const RoleClass = require("./Library/role");
-const EmpClass = require("./Library/emp");
-const db = require("./middleware/db");
-const res = require('express/lib/response');
-const mysql = require("mysql");
+const mysql = require("mysql2");
+const Table = require('console.table');
 require("dotenv").config();
 
+const db = mysql.createConnection({
+  host: "localhost",
+  user:"root",
+  password: "password",
+  database: "track_people_db",
+
+});
 
 let teamArray = [];
+
+
 
 const getStarted = () => {
     inquirer.prompt ([
@@ -25,15 +29,14 @@ const getStarted = () => {
         "Add a Role", 
         "Add an Employee", 
         "Update an Employee's Role",
-        "Nothing",
+        "Nothing"
       ],
         },
        
     ])
-
     .then ((answers) => {
         if (answers.options === "View all Departments") {
-            getDept(req, res);
+            getDept();
             getStarted();
         }
     
@@ -63,14 +66,13 @@ const getStarted = () => {
 });
 };
 
-getStarted();
+
 // change the above abit and doublt check the db query
 
-
-const getDept = (req, res) => {
-    req.db.query('SELECT * FROM Department', (err, data) => {
+function getDept() {
+    db.query('SELECT * FROM Department', (err, data) => {
       if (err) {
-        console.log(`[ERROR]: Failed to get movies | ${err.message}`);
+        console.log(`[ERROR]: Failed to get departments`);
         return res.status(500).json({ success: false });
       }
         return res.json ({success: true, data});
@@ -143,3 +145,4 @@ const getRoles = (req, res) => {
     );
   };
   
+  getStarted()

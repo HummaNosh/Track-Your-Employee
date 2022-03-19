@@ -11,7 +11,7 @@ require("dotenv").config();
 
 let teamArray = [];
 
-function getStarted () {
+const getStarted = () => {
     inquirer.prompt ([
         {
       type: "list",
@@ -58,7 +58,7 @@ function getStarted () {
         teamArray.push(addEmp);
       }
       if (answers.newDep === "What is the name of your new department?") {
-        addnewDep();
+        
       }
 });
 };
@@ -101,8 +101,8 @@ const getRoles = (req, res) => {
   }
 
 
-  const addnewDep = (req, res) => {
-    console.log("add a new dep!!!!!!!!!!!!!!!")
+  // const addnewDep = (req, res) => {
+  //   console.log("add a new dep!!!!!!!!!!!!!!!")
     // const query ('SELECT * FROM Employee ', (err, data) => {
     //   if (err) {
     //     console.log(`[ERROR]: Failed to get employee info | ${err.message}`);
@@ -142,15 +142,4 @@ const getRoles = (req, res) => {
       }
     );
   };
-  };
-
-// module.exports = {
- 
-//   getDept, 
-//    getRoles,
-//    getEmployee,
-//    updateEmpbyID,
-// };
-
-
-// add new dep , emp , update emp, make loop
+  

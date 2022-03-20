@@ -14,10 +14,9 @@ const db = mysql.createConnection({
 
 db.connect((err) => {
   if (err) throw err;
-  console.log(`Connected to the company_db database.`);
   getStarted();
 });
-let teamArray = [];
+
 
 
 
@@ -31,8 +30,8 @@ const getStarted = () => {
         "View all Departments",
         "View all Roles", 
         "View all Employees", 
-        "Add a department", 
-        "Add a Role", 
+        "Add a new Department", 
+        "Add a new Role", 
         "Add an Employee", 
         "Update an Employee's Role",
         "Nothing"
@@ -41,37 +40,28 @@ const getStarted = () => {
        
     ])
     .then ((answers) => {
-        if (answers.options === "View all Departments") {
-            getDept();
-           
-        }
-    
+    if (answers.options === "View all Departments") {
+      getDept();
+    }
     if (answers.options === "View all Roles") {
       getRoles();
     }
     if (answers.options === "View all Employees") {
       getEmployee();
-    };
-    if (answers.options === "Add an department") {
-        let addDep = new DeptClass (answers.id, answers.department_id);
-        teamArray.push(addDep);
-      }
-    if (answers.options === "Add an Role") {
-        let addRole = new RoleClass (answers.id, answers.department_id);
-        teamArray.push(addRole);
-      }
-      if (answers.options === "Add an Employee") {
-        let addEmp = new EmpClass (answers.id, answers.department_id);
-        teamArray.push(addEmp);
-      }
-      if (answers.newDep === "What is the name of your new department?") {
-        
-      }
+    }
+    if (answers.options === "Add an new Department") {
+     addDep();
+    }
+    if (answers.options === "Add an new Role") {
+    addRoles();
+    }
+   if (answers.options === "Add an Employee") {
+    addEmp();
+    }
 });
 };
 
 
-// change the above abit and doublt check the db query
 
 function getDept() {
   console.log("its working");
@@ -113,45 +103,150 @@ function getEmployee() {
   }
 
 
-  // const addnewDep = (req, res) => {
-  //   console.log("add a new dep!!!!!!!!!!!!!!!")
-    // const query ('SELECT * FROM Employee ', (err, data) => {
-    //   if (err) {
-    //     console.log(`[ERROR]: Failed to get employee info | ${err.message}`);
-    //     return res.status(500).json({ success: false });
-    //   }
-  
-    //   return res.json({ success: true, data });
-    // });
-  // }
-  // {
-  //   type: "input",
-  //   name: "newDep",
-  //   message:"What is the name of your new department?", 
-   
-  //     },
+function addDep() {
+
+  inquirer.prompt([
+    {
+    type: "input",
+    name: "addDep",
+    message: "What is the name of your new Department?",
+  },
+])
+ .then ((answers) => {
+   console.log( answers);
+  const sql = `INSERT INTO Department (names) VALUES (?)`;
+  db.query(sql, answers.addDep, (err, result) => {
+
+    if (err) throw err;
+    console.log("Added " + answers.addDep + " to departments!");
+    getDept();
+
+  });
+}
+ );
+}
+
+function addRoles() {
+
+  db.query(`SELECT * FROM Department;`, (err, result) => {
+    if (err) throw err;
+    let department = result.map((Department) => ({
+      name: Department.names,
+      value: Department.id,
+    }));
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "role",
+          message: "What role do you want to add?",
+        },
+        {
+          type: "input",
+          name: "salary",
+          message: "What is the salary of this role?",
+        },
+        {
+          type: "list",
+          name: "deptName",
+          message: "Which department do you want to add the new role to?",
+          choices: department,
+        },
+      ])
+      .then((answers) => {
+        db.query(
+          `INSERT INTO roles SET ?`,
+          {
+            title: answers.role,
+            salary: answers.salary,
+            department_id: answers.deptName,
+          },
+          (err, result) => {
+            if (err) throw err;
+          console.log("something")
+            getStarted();
+          }
+        );
+      });
+  });
+}
 
 
-  const updateEmpbyID = (req, res) => {
-    const { EmpName } = req.body;
-    const { EmpID } = req.params;
+function addEmp() {
+  db.query(`SELECT * FROM Role;`, (err, result) => {
+    if (err) throw err;
+    const role = result.map((Role) => ({ name: Role.title, value: Role.id }));
+    db.query(`SELECT * FROM Employee;`, (err, result) => {
+      if (err) throw err;
+      const Employee = result.map((Employee) => ({
+        name: Employee.first_name + " " + Employee.last_name,
+        value: Employee.id,
+      }));
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "firstName",
+            message: "What is the first name of the new employee?",
+          },
+          {
+            type: "input",
+            name: "lastName",
+            message: "What is the employee's surname?",
+          },
+          {
+            type: "list",
+            name: "role",
+            message: "Please select the role the new employee is taking on?",
+            choices: role,
+          },
+          {
+            type: "list",
+            name: "manager",
+            message: "Please select the new employee's manager",
+            choices: Employee,
+          },
+        ])
+        .then((answers) => {
+          db.query(
+            `INSERT INTO Employee SET ?`,
+            {
+              first_name: answers.firstName,
+              last_name: answers.lastName,
+              role_id: answers.role,
+              manager_id: answers.manager,
+            },
+            (err, result) => {
+              if (err) throw err;
+              console.log("Wahoo! Your new employee has been added, please check out 'view all employees' for more information" )
+              getStarted();
+            }
+          );
+        });
+    });
+  });
+}
+
+  // const updateEmpbyID = (req, res) => {
+  //   const { EmpName } = req.body;
+  //   const { EmpID } = req.params;
   
-    if (!EmpName) {
-      return res
-        .status(400)
-        .json({ success: false, error: 'Please provide a name' });
-    }
+  //   if (!EmpName) {
+  //     return res
+  //       .status(400)
+  //       .json({ success: false, error: 'Please provide a name' });
+  //   }
   
-    req.db.query(
-      `UPDATE Roles SET first_name and last_name ="${EmpName}" WHERE id=${EmpID}`,
-      (err) => {
-        if (err) {
-          console.log(`[ERROR]: Failed to update movie | ${err.message}`);
-          return res.status(500).json({ success: false });
-        }
+  //   req.db.query(
+  //     `UPDATE Roles SET first_name and last_name ="${EmpName}" WHERE id=${EmpID}`,
+  //     (err) => {
+  //       if (err) {
+  //         console.log(`[ERROR]: Failed to update movie | ${err.message}`);
+  //         return res.status(500).json({ success: false });
+  //       }
   
-        return res.json({ success: true });
-      }
-    );
-  };
+  //       return res.json({ success: true });
+  //     }
+  //   );
+  // };
   

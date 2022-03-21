@@ -71,7 +71,6 @@ const getStarted = () => {
 
 // Get department info as defined in schema/seeds
 function getDept() {
-  console.log("its working");
 
     db.query('SELECT * FROM Department', function (err, data) {
       if (err) {

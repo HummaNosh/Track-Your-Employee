@@ -35,7 +35,7 @@ const getStarted = () => {
         "Add a new Role", 
         "Add an Employee", 
         "Update an Employee's Role",
-        "Nothing"
+        "Delete an Employee"
       ],
         },
        
@@ -61,6 +61,9 @@ const getStarted = () => {
     }
     if (answers.options === "Update an Employee's Role") {
       updateEmployeeRole();
+      }
+   if (answers.options === "Delete an Employee") {
+      deleteEmp();
       }
 });
 };
@@ -106,7 +109,7 @@ function getEmployee() {
     });
   }
 
-// this doesnt work
+//THIS DOESNT WORK
 function addDep() {
 
   inquirer.prompt([
@@ -129,7 +132,7 @@ function addDep() {
  );
 }
 
-// this doesnt work
+// THIS DOESNT WORK
 function addRoles() {
 
   db.query(`SELECT * FROM Department;`, (err, result) => {
@@ -174,6 +177,7 @@ function addRoles() {
       });
   });
 }
+
 
 // Add an employee by entering name, role and manager id
 function addEmp () {
@@ -235,9 +239,6 @@ function addEmp () {
       });
     });
   }
-
-
-
 
 // Update employee roles by using their names..
 
@@ -308,3 +309,39 @@ function updateEmployeeRole() {
   });  
 
 }
+
+// THIS DOESNT WORK
+function deleteEmp () {
+  db.query(` SELECT * FROM Employee`), (err, result) => {
+    if (err) {
+      console.log(err)
+    }
+    const Emp = result.map((Employee) => ({
+      name: Employee.first_name + " " + Employee.last_name,
+      value: Employee.id,
+    }));
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "employee",
+          message: "Which employee would you like to delete?",
+          choices: Emp,
+        },
+      ])
+      .then((answers) => {
+        db.query(
+          `DELETE FROM Employee WHERE ?`,
+          [
+            {
+              id: answers.employee,
+            },
+          ],
+          (err, result) => {
+            if (err) throw err;
+      console.log(result)
+            getStarted();
+          }
+        );
+      });
+  }}

@@ -13,8 +13,8 @@ const db = mysql.createConnection({
 
 });
 
-db.connect((err) => {
-  if (err) throw err;
+db.connect((error) => {
+  if (error) throw error;
   getStarted();
 });
 
@@ -50,12 +50,12 @@ const getStarted = () => {
     if (answers.options === "View all Employees") {
       getEmployee();
     }
-    if (answers.options === "Add an new Department") {
-     addDep();
-    }
-    if (answers.options === "Add an new Role") {
-    addRoles();
-    }
+    if (answers.options === "Add a new Department"){
+      addDep();
+    };
+    if (answers.options === "Add a new Role"){
+      addRoles();
+    };
    if (answers.options === "Add an Employee") {
     addEmp();
     }
@@ -109,34 +109,36 @@ function getEmployee() {
     });
   }
 
-//THIS DOESNT WORK
+// Add a department and save it 
 function addDep() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "newDep",
+        message: "What is the name of your new Department?",
+      },
+    ])
+    .then((answer) => {
+      db.query(
+        "INSERT INTO Department SET ?",
+        { department_name: answer.newDep },
+        function (error, result) {
+          if (error) {
+            console.log(error);
+          }
 
-  inquirer.prompt([
-    {
-    type: "input",
-    name: "addDep",
-    message: "What is the name of your new Department?",
-  },
-])
- .then ((answers) => {
-   console.log( answers);
-  const sql = `INSERT INTO Department (names) VALUES (?)`;
-  db.query(sql, answers.addDep, (err, result) => {
-
-    if (err) throw err;
-    getDept();
-
-  });
+          console.log("Wahoo! You have added a new Department, select 'View all Departments' for more information")
+          getStarted();
+        }
+      );
+    });
 }
- );
-}
-
-// THIS DOESNT WORK
+// Add Roles and save to roles..
 function addRoles() {
 
-  db.query(`SELECT * FROM Department;`, (err, result) => {
-    if (err) throw err;
+  db.query(`SELECT * FROM Department;`, (error, result) => {
+    if (error) throw error;
     let department = result.map((Department) => ({
       name: Department.names,
       value: Department.id,
@@ -162,20 +164,23 @@ function addRoles() {
       ])
       .then((answers) => {
         db.query(
-          `INSERT INTO roles SET ?`,
+          `INSERT INTO Role SET ?`,
           {
             title: answers.role,
             salary: answers.salary,
             department_id: answers.deptName,
           },
-          (err, result) => {
-            if (err) throw err;
-          console.log("something")
+          function (error, result) {
+            if (error) {
+          console.log(error)
+            }
+            console.log("Wahooo! You have added a new role, please see 'View all Roles' for more inforamtion")
             getStarted();
           }
         );
       });
-  });
+  }
+  );
 }
 
 
@@ -232,7 +237,7 @@ function addEmp () {
             console.log(error);
           }
           
-          console.table(result);
+          console.log("Wahoo! You have added a new employee! Select 'View all Employees' for more information!");
           getStarted();
         }
         );
@@ -257,10 +262,10 @@ function updateEmployeeRole() {
       }
     })
 
-    db.query("SELECT * FROM Employee", (err, result) => {
-      if(err) {
-        console.log(err);
-        throw err;
+    db.query("SELECT * FROM Employee", (error, result) => {
+      if(error) {
+        console.log(error);
+        throw error;
       }
 
       const EmpData = result.map(Employee => {
@@ -292,16 +297,16 @@ function updateEmployeeRole() {
           console.log(result.role);
           db.query(
             "UPDATE Employee SET Employee.role_id = ? WHERE Employee.id = ?",
-            [result.role, result.Employee], (err, result) => {
-              if (err) throw err;
+            [result.role, result.Employee], (error, result) => {
+              if (error) throw error;
             
               console.table(result);
               getStarted();
             }
           );
         })
-        .catch(err => {
-          console.log(err)
+        .catch(error => {
+          console.log(error)
         });
 
     });  
@@ -312,9 +317,9 @@ function updateEmployeeRole() {
 
 // THIS DOESNT WORK
 function deleteEmp () {
-  db.query(` SELECT * FROM Employee`), (err, result) => {
-    if (err) {
-      console.log(err)
+  db.query(` SELECT * FROM Employee`), (error, result) => {
+    if (error) {
+      console.log(error)
     }
     const Emp = result.map((Employee) => ({
       name: Employee.first_name + " " + Employee.last_name,
@@ -337,8 +342,8 @@ function deleteEmp () {
               id: answers.employee,
             },
           ],
-          (err, result) => {
-            if (err) throw err;
+          (error, result) => {
+            if (error) throw error;
       console.log(result)
             getStarted();
           }

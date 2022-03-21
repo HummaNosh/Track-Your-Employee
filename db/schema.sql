@@ -5,12 +5,12 @@ CREATE DATABASE track_people_db;
 USE track_people_db;
 
 CREATE TABLE Department (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     department_name VARCHAR (100)
 );
 
 CREATE TABLE Role (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR (30),
     salary DECIMAL,
     department_id INT,
@@ -20,7 +20,7 @@ CREATE TABLE Role (
 
 
 CREATE TABLE Employee (
-    id INT PRIMARY KEY auto_increment,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR (30),
     last_name VARCHAR (30),
     role_id INT NOT NULL,

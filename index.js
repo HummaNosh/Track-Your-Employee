@@ -62,8 +62,8 @@ const getStarted = () => {
     if (answers.options === "Update an Employee's Role") {
       updateEmployeeRole();
       }
-   if (answers.options === "Delete an Employee") {
-      deleteEmp();
+      if (answers.options === "Delete an Employee") {
+        deleteEmp();
       }
 });
 };
@@ -300,7 +300,7 @@ function updateEmployeeRole() {
             [result.role, result.Employee], (error, result) => {
               if (error) throw error;
             
-              console.table(result);
+              console.log("Wahoo! You have updated your employee information!")
               getStarted();
             }
           );
@@ -315,13 +315,12 @@ function updateEmployeeRole() {
 
 }
 
-// THIS DOESNT WORK
-function deleteEmp () {
-  db.query(` SELECT * FROM Employee`), (error, result) => {
-    if (error) {
-      console.log(error)
-    }
-    const Emp = result.map((Employee) => ({
+
+// Delete an employee
+function deleteEmp() {
+  db.query(`SELECT * FROM Employee`, (err, res) => {
+    if (err) throw err;
+    let employee = res.map((Employee) => ({
       name: Employee.first_name + " " + Employee.last_name,
       value: Employee.id,
     }));
@@ -330,8 +329,8 @@ function deleteEmp () {
         {
           type: "list",
           name: "employee",
-          message: "Which employee would you like to delete?",
-          choices: Emp,
+          message: "Select the employee you would like to remove",
+          choices: employee,
         },
       ])
       .then((answers) => {
@@ -342,11 +341,14 @@ function deleteEmp () {
               id: answers.employee,
             },
           ],
-          (error, result) => {
-            if (error) throw error;
-      console.log(result)
+          (err, res) => {
+            if (err) throw err;
+            console.log(
+             "Wahoo! You have deleted an Employee! Hire more and add them!"
+            );
             getStarted();
           }
         );
       });
-  }}
+  });
+}
